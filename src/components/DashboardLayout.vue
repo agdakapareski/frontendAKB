@@ -3,8 +3,8 @@
     <v-navigation-drawer v-model="drawer" class="fullheight" width="256" app>
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title class="title"> Nama Kalian </v-list-item-title>
-          <v-list-item-subtitle> NPM </v-list-item-subtitle>
+          <v-list-item-title class="title"> Atma Korean BBQ </v-list-item-title>
+          <v-list-item-subtitle> Admin Page </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
 
@@ -19,16 +19,16 @@
           :to="item.to"
         >
           <v-list-item-content>
-            <v-list-item-title>{{ items.title }}</v-list-item-title>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar app fixed height="75px">
+    <v-app-bar app fixed height="67px">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <VSpacer />
       <v-toolbar-items>
-        <v-btn text router><v-icon>mdi-power</v-icon></v-btn>
+        <v-btn text router @click="logout"><v-icon>mdi-power</v-icon></v-btn>
       </v-toolbar-items>
     </v-app-bar>
     <div class="fullheight pa-5">
@@ -51,5 +51,27 @@ export default {
       ],
     };
   },
+  methods: {
+    logout: function() {
+      localStorage.setItem("id", "");
+      localStorage.setItem("token", "");
+      this.$router.push({ name: "Login" });
+    },
+  },
 };
 </script>
+
+<style scoped>
+.fullheight {
+  min-height: 100vh !important;
+}
+.router {
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+}
+
+.dashboard {
+  background-color: rgb(205, 205, 212);
+  color: black;
+}
+</style>

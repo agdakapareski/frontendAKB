@@ -88,7 +88,7 @@ export default {
             password: this.password,
           })
           .then((response) => {
-            localStorage.setItem("id", response.data.users.id);
+            localStorage.setItem("id", response.data.user.id);
             localStorage.setItem("token", response.data.access_token);
 
             this.error_message = response.data.message;
@@ -97,16 +97,16 @@ export default {
             this.load = false;
             this.clear();
             this.$router.push({
-              name: "Pegawai",
+              name: "DashboardLayout",
             });
           })
-          .catch((error) => {
-            this.error_message = error.response.data.message;
-            this.color = "red";
-            this.snackbar = true;
-            localStorage.removeItem("token");
-            this.load = false;
-          });
+          // .catch((error) => {
+          //   this.error_message = error.response.data.message;
+          //   this.color = "red";
+          //   this.snackbar = true;
+          //   localStorage.removeItem("token");
+          //   this.load = false;
+          // });
       }
     },
     clear() {

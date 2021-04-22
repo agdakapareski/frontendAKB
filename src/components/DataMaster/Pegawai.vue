@@ -45,11 +45,13 @@
             <v-select
               v-model="form.kelamin_pegawai"
               label="Jenis Kelamin"
+              :items="items_kelamin"
               required
             ></v-select>
             <v-select
               v-model="form.posisi_pegawai"
               label="Posisi Pegawai"
+              :items="items_posisi"
               required
             ></v-select>
             <v-date-picker
@@ -60,6 +62,7 @@
             <v-select
               v-model="form.status_pegawai"
               label="Status Pegawai"
+              :items="items_status"
               required
             ></v-select>
           </v-container>
@@ -82,6 +85,9 @@ export default {
   name: "Pegawai",
   data() {
     return {
+      items_kelamin: ["Laki-Laki", "Perempuan"],
+      items_posisi: ["Operational Manager", "Waiter", "Kasir", "Chef"],
+      items_status: ["aktif", "nonaktif"],
       inputType: "Tambah",
       load: false,
       snackbar: false,
@@ -92,7 +98,7 @@ export default {
       headers: [
         { text: "Nama Pegawai", value: "nama_pegawai" },
         { text: "Email Pegawai", value: "email_pegawai" },
-        { text: "Password", value: "password" },
+        // { text: "Password", value: "password" },
         { text: "Jenis Kelamin", value: "kelamin_pegawai" },
         { text: "Posisi", value: "posisi_pegawai" },
         { text: "Tanggal Bergabung", value: "tanggal_bergabung" },
@@ -111,6 +117,7 @@ export default {
         status_pegawai: null,
       },
       editId: "",
+      deleteId: "",
     };
   },
   methods: {
@@ -123,7 +130,7 @@ export default {
       this.pegawai.append("tanggal_bergabung", this.form.tanggal_bergabung);
       this.pegawai.append("status_pegawai", this.form.status_pegawai);
 
-      let url = this.$api + "/users/";
+      let url = this.$api + "/register/";
       this.load = true;
       this.$http
         .post(url, this.pegawai, {
@@ -218,6 +225,8 @@ export default {
       this.form.status_pegawai = item.status_pegawai;
       this.dialog = true;
     },
+
+    
 
     close() {
       this.dialog = false;
