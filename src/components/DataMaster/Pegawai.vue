@@ -68,6 +68,7 @@
               color="warning"
               v-model="form.tanggal_bergabung"
               label="Tanggal Bergabung"
+              :show-current="false"
               full-width
               required
             ></v-date-picker>
