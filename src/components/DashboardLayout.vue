@@ -1,10 +1,10 @@
 <template>
   <div class="dashboard">
-    <v-navigation-drawer v-model="drawer" class="fullheight" width="256" app>
+    <v-navigation-drawer v-model="drawer" class="fullheight" width="256" app dark color="warning">
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title class="title"> Atma Korean BBQ </v-list-item-title>
-          <v-list-item-subtitle> Admin Page </v-list-item-subtitle>
+          <v-list-item-subtitle><v-icon>mdi-account</v-icon> Admin Page </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
 
@@ -28,7 +28,10 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <VSpacer />
       <v-toolbar-items>
-        <v-btn text router @click="logout"><v-icon>mdi-power</v-icon></v-btn>
+        <v-btn text router @click="logout">
+          <v-icon>mdi-power</v-icon>
+          <v-text>Logout</v-text>
+        </v-btn>
       </v-toolbar-items>
     </v-app-bar>
     <div class="fullheight pa-5">
@@ -71,7 +74,7 @@ export default {
 }
 
 .dashboard {
-  background-color: rgb(205, 205, 212);
-  color: black;
+  color: white;
+  background-color: gray;
 }
 </style>

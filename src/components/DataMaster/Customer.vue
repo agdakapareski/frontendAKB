@@ -5,7 +5,7 @@
       <v-card-title>
         <v-text-field
           v-model="search"
-          append-icon="mdi-magnify"
+          prepend-icon="mdi-magnify"
           label="Search"
           single-line
           hide-details
@@ -15,9 +15,11 @@
       </v-card-title>
       <v-data-table :headers="headers" :items="customers" :search="search">
         <template v-slot:[`item.actions`]="{ item }">
-          <v-btn small class="mr-2" @click="editHandler(item)"> Edit </v-btn>
-          <v-btn small @click="deleteData">
-            delete
+          <v-btn class="mr-2" @click="editHandler(item)" dark color="warning">
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn @click="deleteData" dark color="error">
+            <v-icon>mdi-delete</v-icon>
           </v-btn>
         </template>
       </v-data-table>
@@ -25,9 +27,9 @@
 
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
-        <v-card-title>
-          <span class="headline">{{ formTitle }} Pegawai</span>
-        </v-card-title>
+        <v-toolbar dark color="warning">
+          <v-toolbar-title class="headline">{{ formTitle }} Customer</v-toolbar-title>
+        </v-toolbar>
         <v-card-text>
           <v-container>
             <v-text-field
@@ -49,8 +51,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="cancel">Batal</v-btn>
-          <v-btn color="blue darken-1" text @click="setForm">Simpan</v-btn>
+          <v-btn text @click="cancel">Batal</v-btn>
+          <v-btn color="warning" text @click="setForm">Simpan</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -203,7 +205,7 @@ export default {
     },
 
     editHandler(item) {
-      this.inputType = "Ubah";
+      this.inputType = "Update";
       this.editId = item.id;
       this.form.nama_customer = item.nama_customer;
       this.form.email_customer = item.email_customer;

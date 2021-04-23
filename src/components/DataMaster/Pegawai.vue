@@ -5,7 +5,7 @@
       <v-card-title>
         <v-text-field
           v-model="search"
-          append-icon="mdi-magnify"
+          prepend-icon="mdi-magnify"
           label="Search"
           single-line
           hide-details
@@ -15,16 +15,23 @@
       </v-card-title>
       <v-data-table :headers="headers" :items="pegawais" :search="search">
         <template v-slot:[`item.actions`]="{ item }">
-          <v-btn small class="mr-2" @click="editHandler(item)"> Edit </v-btn>
+          <v-btn class="mr-2" dark color="warning" @click="editHandler(item)">
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
         </template>
       </v-data-table>
     </v-card>
 
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
-        <v-card-title>
+        <v-toolbar dark color="warning">
+          <v-toolbar-title class="headline"
+            >{{ formTitle }} Pegawai</v-toolbar-title
+          >
+        </v-toolbar>
+        <!-- <v-card-title>
           <span class="headline">{{ formTitle }} Pegawai</span>
-        </v-card-title>
+        </v-card-title> -->
         <v-card-text>
           <v-container>
             <v-text-field
@@ -54,9 +61,14 @@
               :items="items_posisi"
               required
             ></v-select>
+            <div class="heading">
+              Tanggal Bergabung
+            </div>
             <v-date-picker
+              color="warning"
               v-model="form.tanggal_bergabung"
               label="Tanggal Bergabung"
+              full-width
               required
             ></v-date-picker>
             <v-select
@@ -69,8 +81,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="cancel">Batal</v-btn>
-          <v-btn color="blue darken-1" text @click="setForm">Simpan</v-btn>
+          <v-btn text @click="cancel">Batal</v-btn>
+          <v-btn color="warning" text @click="setForm">Simpan</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -214,7 +226,7 @@ export default {
     },
 
     editHandler(item) {
-      this.inputType = "Ubah";
+      this.inputType = "Update";
       this.editId = item.id;
       this.form.nama_pegawai = item.nama_pegawai;
       this.form.email_pegawai = item.email_pegawai;
@@ -225,8 +237,6 @@ export default {
       this.form.status_pegawai = item.status_pegawai;
       this.dialog = true;
     },
-
-    
 
     close() {
       this.dialog = false;

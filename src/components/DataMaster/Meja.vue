@@ -5,7 +5,7 @@
       <v-card-title>
         <v-text-field
           v-model="search"
-          append-icon="mdi-magnify"
+          prepend-icon="mdi-magnify"
           label="Search"
           single-line
           hide-details
@@ -15,19 +15,21 @@
       </v-card-title>
       <v-data-table :headers="headers" :items="mejas" :search="search">
         <template v-slot:[`item.actions`]="{ item }">
-          <v-btn small class="mr-2" @click="editHandler(item)"> Edit </v-btn>
-          <v-btn small @click="deleteData">
-            delete
+          <v-btn class="mr-2" @click="editHandler(item)" dark color="warning">
+            <v-icon>mdi-pencil</v-icon>
           </v-btn>
+          <!-- <v-btn small @click="deleteData">
+            delete
+          </v-btn> -->
         </template>
       </v-data-table>
     </v-card>
 
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
-        <v-card-title>
-          <span class="headline">{{ formTitle }} Meja</span>
-        </v-card-title>
+        <v-toolbar dark color="warning">
+          <v-toolbar-title class="headline">{{ formTitle }} Meja</v-toolbar-title>
+        </v-toolbar>
         <v-card-text>
           <v-container>
             <v-text-field
@@ -35,17 +37,18 @@
               label="Nomor Meja"
               required
             ></v-text-field>
-            <v-text-field
+            <v-select
               v-model="form.status_meja"
               label="Status Meja"
+              :items="item_status"
               required
-            ></v-text-field>
+            ></v-select>
           </v-container>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="cancel">Batal</v-btn>
-          <v-btn color="blue darken-1" text @click="setForm">Simpan</v-btn>
+          <v-btn text @click="cancel">Batal</v-btn>
+          <v-btn color="warning" text @click="setForm">Simpan</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -60,6 +63,7 @@ export default {
   name: "Meja",
   data() {
     return {
+      item_status: ["Tersedia", "Tidak Tersedia"],
       inputType: "Tambah",
       load: false,
       snackbar: false,
@@ -67,7 +71,6 @@ export default {
       color: "",
       search: null,
       dialog: false,
-      items_kategori: ["Makanan Utama", "Side Dish", "Minuman"],
       headers: [
         { text: "Nomor Meja", value: "nomor_meja" },
         { text: "Status Meja", value: "status_meja" },
@@ -195,7 +198,7 @@ export default {
     },
 
     editHandler(item) {
-      this.inputType = "Ubah";
+      this.inputType = "Update";
       this.editId = item.id;
       this.form.nomor_meja = item.nomor_meja;
       this.form.status_meja = item.status_meja;

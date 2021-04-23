@@ -1,53 +1,48 @@
 <template>
-  <main>
-    <v-container fluid fill-height class="posisinya">
-      <v-layout flex align-center justify-center>
-        <v-flex xs12 sm6 elevation-6>
-          <v-toolbar class="grey darken-3">
-            <v-toolbar-title class="grey--text">
-              <h1>LOGIN</h1>
-            </v-toolbar-title>
-          </v-toolbar>
-          <v-card>
-            <v-card-text class="pt-4">
-              <div>
+  <v-app id="inspire">
+    <v-main>
+      <v-container fluid fill-height>
+        <v-layout align-center justify-center>
+          <v-flex xs12 sm8 md4>
+            <v-card class="elevation-12">
+              <v-toolbar dark color="warning">
+                <v-toolbar-title>Login</v-toolbar-title>
+              </v-toolbar>
+              <v-card-text>
                 <v-form v-model="valid" ref="form">
                   <v-text-field
+                    prepend-icon="mdi-email"
                     label="E-mail"
                     v-model="email_pegawai"
                     :rules="emailRules"
                     required
                   ></v-text-field>
                   <v-text-field
+                    prepend-icon="mdi-lock"
                     label="Password"
                     v-model="password"
                     type="password"
-                    min="8"
                     :rules="passwordRules"
-                    counter
                     required
                   ></v-text-field>
-                  <v-layout justify-end>
-                    <v-btn
-                      class="mr-2"
-                      @click="submit"
-                      :class="{ 'grey darken-1 white--text': valid, disabled: !valid }"
-                      >Go
-                    </v-btn>
-                    <v-btn @click="clear" class="grey darken-3 white--text">Clear </v-btn>
-                  </v-layout>
                 </v-form>
-              </div>
-            </v-card-text>
-          </v-card>
-          <v-snackbar v-model="snackbar" :color="color" timeout="2000" bottom>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="warning" @click="submit">Login</v-btn>
+                <v-btn @click="clear">Clear</v-btn>
+              </v-card-actions>
+            </v-card>
+            <v-snackbar v-model="snackbar" :color="color" timeout="2000" bottom>
             {{ error_message }}
           </v-snackbar>
-        </v-flex>
-      </v-layout>
-    </v-container>
-  </main>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
+
 
 <style>
 @import url("https://fonts.googleapis.com/css?family=Jolly%20Lodger");
@@ -97,16 +92,17 @@ export default {
             this.load = false;
             this.clear();
             this.$router.push({
-              name: "DashboardLayout",
+              name: "Pegawai",
             });
           })
-          // .catch((error) => {
-          //   this.error_message = error.response.data.message;
-          //   this.color = "red";
-          //   this.snackbar = true;
-          //   localStorage.removeItem("token");
-          //   this.load = false;
-          // });
+        .catch((error) => {
+          this.error_message = error.response.data.message;
+          this.color = "red";
+          this.snackbar = true;
+          localStorage.removeItem("token");
+          localStorage.removeItem('id');
+          this.load = false;
+        });
       }
     },
     clear() {
