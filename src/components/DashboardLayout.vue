@@ -1,10 +1,23 @@
 <template>
   <div class="dashboard">
-    <v-navigation-drawer v-model="drawer" class="fullheight" width="256" app dark color="warning">
+    <!-- BAGIAN DRAWER -->
+    <v-navigation-drawer
+      v-model="drawer"
+      class="fullheight"
+      width="260"
+      app
+      :items="form"
+    >
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title class="title"> Atma Korean BBQ </v-list-item-title>
-          <v-list-item-subtitle><v-icon>mdi-account</v-icon> Admin Page </v-list-item-subtitle>
+          <v-list-item-title>
+            <v-layout justify-center>
+              <img src="../assets/akb-logo.png" width="160" alt="">
+            </v-layout>
+          </v-list-item-title>
+          <v-list-item-title>
+            <v-icon class="mr-3">mdi-account-circle</v-icon> {{ form.email_pegawai }}
+          </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 
@@ -19,21 +32,30 @@
           :to="item.to"
         >
           <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title
+              ><v-icon class="mr-3">{{ item.icon }}</v-icon
+              >{{ item.title }}</v-list-item-title
+            >
           </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar app fixed height="67px">
+
+    <!-- BAGIAN APP BAR -->
+    <v-app-bar app dark color="warning" fixed height="50px" :items="form">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <VSpacer />
+      <v-toolbar-item class="mr-3">
+        <v-toolbar-item-title>{{ form.nama_pegawai }}, {{ form.posisi_pegawai }}</v-toolbar-item-title>
+      </v-toolbar-item>
       <v-toolbar-items>
         <v-btn text router @click="logout">
-          <v-icon>mdi-power</v-icon>
-          <v-text>Logout</v-text>
+          <v-icon>mdi-logout</v-icon>
         </v-btn>
       </v-toolbar-items>
     </v-app-bar>
+
+    <!-- ISI KOMPONEN -->
     <div class="fullheight pa-5">
       <router-view></router-view>
     </div>
@@ -47,11 +69,21 @@ export default {
     return {
       drawer: true,
       items: [
-        { title: "Pegawai", to: "/pegawai" },
-        { title: "Customer", to: "/customer" },
-        { title: "Menu", to: "/menu" },
-        { title: "Meja", to: "/meja" },
+        { title: "Dashboard", to: "/operational", icon: "mdi-monitor-dashboard" },
+        { title: "Pegawai", to: "/pegawai", icon: "mdi-account-group" },
+        { title: "Customer", to: "/customer", icon: "mdi-human-male-female" },
+        { title: "Menu", to: "/menu", icon: "mdi-food" },
+        { title: "Bahan", to: "/bahan", icon: "mdi-package" },
+        { title: "Meja", to: "/meja", icon: "mdi-table-chair" },
+        { title: "Pesanan", to: "/pesanan", icon: "mdi-silverware-fork-knife" },
+        { title: "Transaksi", to: "/transaksi", icon: "mdi-cash-register" }
       ],
+      users: [],
+      form: {
+        nama_pegawai: null,
+        email_pegawai: null,
+        posisi_pegawai: null,
+      }
     };
   },
   methods: {
@@ -60,6 +92,24 @@ export default {
       localStorage.setItem("token", "");
       this.$router.push({ name: "Login" });
     },
+    readData() {
+      let url = this.$api + "/users/" + localStorage.getItem("id");
+      this.$http
+        .get(url, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          this.users = response.data.data;
+          this.form.nama_pegawai = this.users.nama_pegawai;
+          this.form.email_pegawai = this.users.email_pegawai;
+          this.form.posisi_pegawai = this.users.posisi_pegawai;
+        });
+    },
+  },
+  mounted() {
+    this.readData();
   },
 };
 </script>

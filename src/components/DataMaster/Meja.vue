@@ -1,7 +1,32 @@
 <template>
   <v-main>
     <h3 class="text-h3 font-weight-medium mb-5">Meja</h3>
-    <v-card>
+    <!-- <v-card class="mt-4" max-width="auto">
+      <h4 class="mr-4 ml-4 pt-3">Keterangan:</h4>
+      <div class="ml-4 ma-2 mr-4 pb-3">
+        <tr>
+          <td>
+            <v-btn fab class="mr-2 mb-2" dark color="warning"
+              ><v-icon>mdi-plus</v-icon></v-btn
+            >
+          </td>
+          <td>: Tambah Data</td>
+          <td>
+            <v-btn class="ml-10 mr-2 mb-2" dark color="warning"
+              ><v-icon>mdi-pencil</v-icon></v-btn
+            >
+          </td>
+          <td>: Ubah/Update Data</td>
+          <td>
+            <v-btn class="ml-10 mr-2 mb-2" dark color="error"
+              ><v-icon>mdi-delete</v-icon></v-btn
+            >
+          </td>
+          <td>: Hapus Data</td>
+        </tr>
+      </div>
+    </v-card> -->
+    <v-card class="mt-4">
       <v-card-title>
         <v-text-field
           v-model="search"
@@ -11,16 +36,16 @@
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-btn color="warning" @click="dialog = true"> Tambah Meja </v-btn>
+        <v-btn color="warning" @click="dialog = true" fab> <v-icon>mdi-plus</v-icon> </v-btn>
       </v-card-title>
       <v-data-table :headers="headers" :items="mejas" :search="search">
         <template v-slot:[`item.actions`]="{ item }">
           <v-btn class="mr-2" @click="editHandler(item)" dark color="warning">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
-          <!-- <v-btn small @click="deleteData">
-            delete
-          </v-btn> -->
+          <v-btn @click="deleteHandler(item.id)" dark color="error">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
         </template>
       </v-data-table>
     </v-card>
@@ -207,6 +232,7 @@ export default {
 
     deleteHandler(id) {
       this.deleteId = id;
+      this.deleteData();
     },
 
     close() {

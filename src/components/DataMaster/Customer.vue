@@ -1,7 +1,10 @@
 <template>
   <v-main>
+    <!-- JUDUL -->
     <h3 class="text-h3 font-weight-medium mb-5">Customer</h3>
-    <v-card>
+
+    <!-- TABEL DATA -->
+    <v-card class="mt-5">
       <v-card-title>
         <v-text-field
           v-model="search"
@@ -11,24 +14,35 @@
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-btn color="warning" @click="dialog = true"> Tambah Customer </v-btn>
+        <v-btn color="warning" @click="dialog = true" fab> <v-icon>mdi-plus</v-icon> </v-btn>
       </v-card-title>
       <v-data-table :headers="headers" :items="customers" :search="search">
         <template v-slot:[`item.actions`]="{ item }">
           <v-btn class="mr-2" @click="editHandler(item)" dark color="warning">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
-          <v-btn @click="deleteData" dark color="error">
+          <v-btn
+            class="mr-2"
+            @click="deleteHandler(item.id)"
+            dark
+            color="error"
+          >
             <v-icon>mdi-delete</v-icon>
+          </v-btn>
+          <v-btn @click="showQr(item)" dark color="success">
+            <v-icon>mdi-qrcode</v-icon>
           </v-btn>
         </template>
       </v-data-table>
     </v-card>
 
+    <!-- DIALOG TAMBAH/UPDATE -->
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
         <v-toolbar dark color="warning">
-          <v-toolbar-title class="headline">{{ formTitle }} Customer</v-toolbar-title>
+          <v-toolbar-title class="headline"
+            >{{ formTitle }} Customer</v-toolbar-title
+          >
         </v-toolbar>
         <v-card-text>
           <v-container>
@@ -56,6 +70,48 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- DIALOG SHOW QR -->
+    <v-dialog
+      v-model="dialogQr"
+      class="text-center"
+      persistent
+      max-width="400px"
+    >
+      <v-card>
+        <v-layout align-center justify-center>
+          <vue-qrcode
+            v-bind:value="itemQr.nama_customer"
+            errorCorectionLevel="H"
+            scale="13"
+          />
+        </v-layout>
+        <div class="ma-5">
+          <h2 class="headline text-left mb-3">
+            <b> {{ itemQr.nama_customer }}</b>
+          </h2>
+          <tr>
+            <td style="padding-right: 5px">Email</td>
+            <td>: {{ itemQr.email_customer }}</td>
+          </tr>
+          <tr>
+            <td style="padding-right: 5px">No. Telepon</td>
+            <td>: {{ itemQr.telepon_customer }}</td>
+          </tr>
+          <!-- <p class="text-left">Email: {{ itemQr.email_customer }}</p>
+          <p class="text-left">No. Telepon: {{ itemQr.telepon_customer }}</p> -->
+        </div>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="warning" text @click="closeQr">
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- SNACKBAR STATUS -->
     <v-snackbar v-model="snackbar" :color="color" timeout="2000" bottom>
       {{ error_message }}
     </v-snackbar>
@@ -63,13 +119,19 @@
 </template>
 
 <script>
+import VueQrcode from "vue-qrcode";
+
 export default {
   name: "Customer",
+  components: {
+    VueQrcode,
+  },
   data() {
     return {
       inputType: "Tambah",
       load: false,
       snackbar: false,
+      dialogQr: false,
       error_message: "",
       color: "",
       search: null,
@@ -83,9 +145,15 @@ export default {
       customer: new FormData(),
       customers: [],
       form: {
-        nama_customer: null,
-        email_customer: null,
-        telepon_customer: null,
+        nama_customer: "",
+        email_customer: "",
+        telepon_customer: "",
+      },
+      itemQr: {
+        id: null,
+        nama_customer: "",
+        email_customer: "",
+        telepon_customer: "",
       },
       editId: "",
       deleteId: "",
@@ -162,7 +230,7 @@ export default {
       this.$http
         .delete(url, {
           headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
+            Authorization: "Bearer" + localStorage.getItem("token"),
           },
         })
         .then((response) => {
@@ -215,6 +283,19 @@ export default {
 
     deleteHandler(id) {
       this.deleteId = id;
+      this.deleteData();
+    },
+
+    showQr(item) {
+      this.dialogQr = true;
+      this.itemQr.nama_customer = item.nama_customer;
+      this.itemQr.email_customer = item.email_customer;
+      this.itemQr.telepon_customer = item.telepon_customer;
+    },
+
+    closeQr() {
+      this.dialogQr = false;
+      this.inputType = "Tambah";
     },
 
     close() {
@@ -231,9 +312,9 @@ export default {
 
     resetForm() {
       this.form = {
-        nama_customer: null,
-        email_customer: null,
-        telepon_customer: null,
+        nama_customer: "",
+        email_customer: "",
+        telepon_customer: "",
       };
     },
   },

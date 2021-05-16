@@ -1,7 +1,37 @@
 <template>
   <v-main>
+
+    <!-- JUDUL KOMPONEN -->
     <h3 class="text-h3 font-weight-medium mb-5">Pegawai</h3>
-    <v-card>
+
+    <!-- <v-card class="mt-4" max-width="auto">
+      <h4 class="mr-4 ml-4 pt-3">Keterangan:</h4>
+      <div class="ml-4 ma-2 mr-4 pb-3">
+        <tr>
+          <td>
+            <v-btn fab class="mr-2 mb-2" dark color="warning"
+              ><v-icon>mdi-plus</v-icon></v-btn
+            >
+          </td>
+          <td>: Tambah Data</td>
+          <td>
+            <v-btn class="ml-10 mr-2 mb-2" dark color="warning"
+              ><v-icon>mdi-pencil</v-icon></v-btn
+            >
+          </td>
+          <td>: Ubah/Update Data</td>
+          <td>
+            <v-btn class="ml-10 mr-2 mb-2" dark color="error"
+              ><v-icon>mdi-account-cancel</v-icon></v-btn
+            >
+          </td>
+          <td>: Nonaktifkan Karyawan</td>
+        </tr>
+      </div>
+    </v-card> -->
+
+    <!-- TABEL BERISI DATA -->
+    <v-card class="mt-4">
       <v-card-title>
         <v-text-field
           v-model="search"
@@ -11,17 +41,21 @@
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-btn color="warning" @click="dialog = true"> Tambah Pegawai </v-btn>
+        <v-btn color="warning" @click="dialog = true" fab> <v-icon>mdi-plus</v-icon> </v-btn>
       </v-card-title>
       <v-data-table :headers="headers" :items="pegawais" :search="search">
         <template v-slot:[`item.actions`]="{ item }">
           <v-btn class="mr-2" dark color="warning" @click="editHandler(item)">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
+          <v-btn class="mr-2" dark color="error" @click="nonaktifHandler(item)">
+            <v-icon>mdi-account-cancel</v-icon>
+          </v-btn>
         </template>
       </v-data-table>
     </v-card>
 
+    <!-- DIALOG TAMBAH/UPDATE PEGAWAI -->
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
         <v-toolbar dark color="warning">
@@ -72,12 +106,17 @@
               full-width
               required
             ></v-date-picker>
-            <v-select
+            <v-text-field
+              v-model="form.status_pegawai"
+              label="Status Pegawai"
+              required
+            ></v-text-field>
+            <!-- <v-select
               v-model="form.status_pegawai"
               label="Status Pegawai"
               :items="items_status"
               required
-            ></v-select>
+            ></v-select> -->
           </v-container>
         </v-card-text>
         <v-card-actions>
@@ -87,9 +126,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- SNACKBAR STATUS -->
     <v-snackbar v-model="snackbar" :color="color" timeout="2000" bottom>
       {{ error_message }}
     </v-snackbar>
+
   </v-main>
 </template>
 
@@ -127,7 +169,7 @@ export default {
         kelamin_pegawai: null,
         posisi_pegawai: null,
         tanggal_bergabung: null,
-        status_pegawai: null,
+        status_pegawai: "aktif",
       },
       editId: "",
       deleteId: "",
@@ -205,6 +247,37 @@ export default {
         });
     },
 
+    nonaktif() {
+      let newData = {status_pegawai: this.form.status_pegawai};
+      var url = this.$api + "/usersnon/" + this.deleteId;
+      this.load = true;
+      this.$http.put(url, newData, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }).then((response) => {
+          this.error_message = response.data.message;
+          this.color = "green";
+          this.snackbar = true;
+          this.load = false;
+          this.close();
+          this.readData(); //mengambil data
+          this.resetForm();
+          this.inputType = "Tambah";
+        })
+        .catch((error) => {
+          this.error_message = error.response.data.message;
+          this.color = "red";
+          this.snackbar = true;
+          this.load = false;
+        });
+    },
+
+    nonaktifHandler(item) {
+      this.deleteId = item.id;
+      this.nonaktif();
+    },
+
     setForm() {
       if (this.inputType === "Tambah") {
         this.save();
@@ -259,7 +332,7 @@ export default {
         kelamin_pegawai: null,
         posisi_pegawai: null,
         tanggal_bergabung: null,
-        status_pegawai: null,
+        status_pegawai: "aktif",
       };
     },
   },
