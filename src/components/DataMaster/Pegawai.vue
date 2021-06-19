@@ -1,38 +1,11 @@
 <template>
   <v-main>
-
-    <!-- JUDUL KOMPONEN -->
-    <h3 class="text-h3 font-weight-medium mb-5">Pegawai</h3>
-
-    <!-- <v-card class="mt-4" max-width="auto">
-      <h4 class="mr-4 ml-4 pt-3">Keterangan:</h4>
-      <div class="ml-4 ma-2 mr-4 pb-3">
-        <tr>
-          <td>
-            <v-btn fab class="mr-2 mb-2" dark color="warning"
-              ><v-icon>mdi-plus</v-icon></v-btn
-            >
-          </td>
-          <td>: Tambah Data</td>
-          <td>
-            <v-btn class="ml-10 mr-2 mb-2" dark color="warning"
-              ><v-icon>mdi-pencil</v-icon></v-btn
-            >
-          </td>
-          <td>: Ubah/Update Data</td>
-          <td>
-            <v-btn class="ml-10 mr-2 mb-2" dark color="error"
-              ><v-icon>mdi-account-cancel</v-icon></v-btn
-            >
-          </td>
-          <td>: Nonaktifkan Karyawan</td>
-        </tr>
-      </div>
-    </v-card> -->
-
     <!-- TABEL BERISI DATA -->
-    <v-card class="mt-4">
-      <v-card-title>
+    <v-card class="mt-1 rounded-0 elevation-0">
+      <v-card-title class="pb-0">
+        <h2>TABEL PEGAWAI</h2>
+      </v-card-title>
+      <v-card-title class="pt-0">
         <v-text-field
           v-model="search"
           prepend-icon="mdi-magnify"
@@ -41,16 +14,26 @@
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-btn color="warning" @click="dialog = true" fab> <v-icon>mdi-plus</v-icon> </v-btn>
+        <v-btn
+          color="warning"
+          @click="dialog = true"
+          class="elevation-0 rounded-0"
+          >Tambah Pegawai</v-btn
+        >
       </v-card-title>
       <v-data-table :headers="headers" :items="pegawais" :search="search">
         <template v-slot:[`item.actions`]="{ item }">
-          <v-btn class="mr-2" dark color="warning" @click="editHandler(item)">
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-          <v-btn class="mr-2" dark color="error" @click="nonaktifHandler(item)">
-            <v-icon>mdi-account-cancel</v-icon>
-          </v-btn>
+          <v-icon
+            small
+            class="mr-2"
+            @click="editHandler(item)"
+            dark
+            color="warning"
+            >mdi-pencil</v-icon
+          >
+          <v-icon small @click="nonaktifHandler(item)" dark color="error"
+            >mdi-account-cancel</v-icon
+          >
         </template>
       </v-data-table>
     </v-card>
@@ -128,10 +111,6 @@
     </v-dialog>
 
     <!-- SNACKBAR STATUS -->
-    <v-snackbar v-model="snackbar" :color="color" timeout="2000" bottom>
-      {{ error_message }}
-    </v-snackbar>
-
   </v-main>
 </template>
 
@@ -248,14 +227,16 @@ export default {
     },
 
     nonaktif() {
-      let newData = {status_pegawai: this.form.status_pegawai};
+      let newData = { status_pegawai: this.form.status_pegawai };
       var url = this.$api + "/usersnon/" + this.deleteId;
       this.load = true;
-      this.$http.put(url, newData, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }).then((response) => {
+      this.$http
+        .put(url, newData, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
           this.error_message = response.data.message;
           this.color = "green";
           this.snackbar = true;

@@ -2,7 +2,7 @@
   <v-main>
     <v-card class="mt-1 rounded-0 elevation-0">
       <v-card-title class="pb-0">
-        <h2>TABEL MEJA</h2>
+        <h2>TABEL PESANAN</h2>
       </v-card-title>
       <v-card-title class="pt-0">
         <v-text-field
@@ -13,21 +13,14 @@
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-btn color="warning" @click="dialog = true" class="elevation-0 rounded-0">Tambah Meja</v-btn>
+        <!-- <v-btn color="warning" @click="dialog = true" fab>
+          <v-icon>mdi-plus</v-icon>
+        </v-btn> -->
       </v-card-title>
-      <v-data-table :headers="headers" :items="mejas" :search="search">
-        <template v-slot:[`item.status_meja`]="{ item }">
-          <v-chip
-              :color="getColor(item.status_meja)"
-              dark
-              small
-          >
-            {{ item.status_meja }}
-          </v-chip>
-        </template>
+      <v-data-table :headers="headers" :items="pesanans" :search="search">
         <template v-slot:[`item.actions`]="{ item }">
           <v-icon small class="mr-2" @click="editHandler(item)" dark color="warning">mdi-pencil</v-icon>
-          <v-icon small class="mr-2" @click="deleteHandler(item.id_menu)" dark color="error">mdi-delete</v-icon>
+          <v-icon small @click="deleteHandler(item)" dark color="error">mdi-delete</v-icon>
         </template>
       </v-data-table>
     </v-card>
@@ -35,19 +28,41 @@
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
         <v-toolbar dark color="warning">
-          <v-toolbar-title class="headline">{{ formTitle }} Meja</v-toolbar-title>
+          <v-toolbar-title class="headline"
+            >{{ formTitle }} Pesanan</v-toolbar-title
+          >
         </v-toolbar>
         <v-card-text>
           <v-container>
             <v-text-field
-              v-model="form.nomor_meja"
-              label="Nomor Meja"
-              required
+              v-model="form.nama_customer"
+              label="Nama Customer"
+              readonly
+            ></v-text-field>
+            <v-text-field
+              v-model="form.nama_menu"
+              label="Nama Menu"
+              readonly
+            ></v-text-field>
+            <v-text-field
+              v-model="form.harga"
+              label="Harga"
+              readonly
+            ></v-text-field>
+            <v-text-field
+              v-model="form.jumlah_pesanan"
+              label="Jumlah Pesanan"
+              readonly
+            ></v-text-field>
+            <v-text-field
+              v-model="form.subtotal"
+              label="Subtotal"
+              readonly
             ></v-text-field>
             <v-select
-              v-model="form.status_meja"
-              label="Status Meja"
-              :items="item_status"
+              v-model="form.status_pesanan"
+              :items="status"
+              label="Status Pesanan"
               required
             ></v-select>
           </v-container>
@@ -67,10 +82,9 @@
 
 <script>
 export default {
-  name: "Meja",
+  name: "Menu",
   data() {
     return {
-      item_status: ["Tersedia", "Tidak Tersedia"],
       inputType: "Tambah",
       load: false,
       snackbar: false,
@@ -78,35 +92,43 @@ export default {
       color: "",
       search: null,
       dialog: false,
+      status: ["Sedang Disiapkan", "Diproses", "Ready"],
       headers: [
-        { text: "Nomor Meja", value: "nomor_meja" },
-        { text: "Status Meja", value: "status_meja" },
+        { text: "Nama Customer", value: "nama_customer" },
+        { text: "Nama Menu", value: "nama_menu" },
+        { text: "Harga Menu", value: "harga" },
+        { text: "Jumlah Pesanan", value: "jumlah_pesanan" },
+        { text: "Subtotal", value: "subtotal" },
+        { text: "Status Pesanan", value: "status_pesanan" },
         { text: "Actions", value: "actions", sortable: false },
       ],
-      Meja: new FormData(),
-      mejas: [],
+      Pesanan: new FormData(),
+      pesanans: [],
       form: {
-        nomor_meja: null,
-        status_meja: null
+        nama_customer: "",
+        nama_menu: "",
+        harga_menu: null,
+        jumlah_pesanan: null,
+        subtotal: null,
+        status_pesanan: "",
       },
       editId: "",
       deleteId: "",
     };
   },
   methods: {
-    getColor (status_meja) {
-      if(status_meja == "Tersedia") return "success"
-      else return "error"
-    },
-
     save() {
-      this.Meja.append("nomor_meja", this.form.nomor_meja);
-      this.Meja.append("status_meja", this.form.status_meja);
+      this.Pesanan.append("nama_customer", this.form.nama_customer);
+      this.Pesanan.append("nama_menu", this.form.nama_menu);
+      this.Pesanan.append("harga", this.form.harga);
+      this.Pesanan.append("jumlah_pesanan", this.form.jumlah_pesanan);
+      this.Pesanan.append("subtotal", this.form.subtotal);
+      this.Pesanan.append("status_pesanan", this.fomr.status_pesanan);
 
-      let url = this.$api + "/mejas/";
+      let url = this.$api + "/pesanan/";
       this.load = true;
       this.$http
-        .post(url, this.Meja, {
+        .post(url, this.Pesanan, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
@@ -130,11 +152,15 @@ export default {
 
     update() {
       let newData = {
-        nomor_meja: this.form.nomor_meja,
-        status_meja: this.form.status_meja,
+        nama_customer: this.form.nama_customer,
+        nama_menu: this.form.nama_menu,
+        harga: this.form.harga,
+        jumlah_pesanan: this.form.jumlah_pesanan,
+        subtotal: this.form.subtotal,
+        status_pesanan: this.form.status_pesanan,
       };
 
-      var url = this.$api + "/mejas/" + this.editId;
+      var url = this.$api + "/pesanan/" + this.editId;
       this.load = true;
       this.$http
         .put(url, newData, {
@@ -162,7 +188,7 @@ export default {
 
     deleteData() {
       //mengahapus data
-      var url = this.$api + "/mejas/" + this.deleteId;
+      var url = this.$api + "/pesanan/" + this.deleteId;
       //data dihapus berdasarkan id
       this.$http
         .delete(url, {
@@ -197,7 +223,7 @@ export default {
     },
 
     readData() {
-      let url = this.$api + "/mejas";
+      let url = this.$api + "/pesanan";
       this.$http
         .get(url, {
           headers: {
@@ -205,20 +231,24 @@ export default {
           },
         })
         .then((response) => {
-          this.mejas = response.data.data;
+          this.pesanans = response.data.data;
         });
     },
 
     editHandler(item) {
       this.inputType = "Update";
-      this.editId = item.id;
-      this.form.nomor_meja = item.nomor_meja;
-      this.form.status_meja = item.status_meja;
+      this.editId = item.id_detail_transaksi;
+      this.form.nama_customer = item.nama_customer;
+      this.form.nama_menu = item.nama_menu;
+      this.form.harga = item.harga;
+      this.form.jumlah_pesanan = item.jumlah_pesanan;
+      this.form.subtotal = item.subtotal;
+      this.form.status_pesanan = item.status_pesanan;
       this.dialog = true;
     },
 
-    deleteHandler(id) {
-      this.deleteId = id;
+    deleteHandler(item) {
+      this.deleteId = item.id_detail_transaksi;
       this.deleteData();
     },
 
@@ -236,8 +266,12 @@ export default {
 
     resetForm() {
       this.form = {
-        nomor_meja: null,
-        status_meja: null
+        nama_customer: "",
+        nama_menu: "",
+        harga_menu: null,
+        jumlah_pesanan: null,
+        subtotal: null,
+        status_pesanan: "",
       };
     },
   },

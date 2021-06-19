@@ -1,11 +1,11 @@
 <template>
   <v-main>
-    <!-- JUDUL -->
-    <h3 class="text-h3 font-weight-medium mb-5">Customer</h3>
-
     <!-- TABEL DATA -->
-    <v-card class="mt-5">
-      <v-card-title>
+    <v-card class="mt-1 rounded-0 elevation-0">
+      <v-card-title class="pb-0">
+        <h2>TABEL CUSTOMER</h2>
+      </v-card-title>
+      <v-card-title class="pt-0">
         <v-text-field
           v-model="search"
           prepend-icon="mdi-magnify"
@@ -14,24 +14,34 @@
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-btn color="warning" @click="dialog = true" fab> <v-icon>mdi-plus</v-icon> </v-btn>
+        <v-btn
+          color="warning"
+          @click="dialog = true"
+          class="elevation-0 rounded-0"
+          >Tambah Customer</v-btn
+        >
       </v-card-title>
       <v-data-table :headers="headers" :items="customers" :search="search">
         <template v-slot:[`item.actions`]="{ item }">
-          <v-btn class="mr-2" @click="editHandler(item)" dark color="warning">
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-          <v-btn
+          <v-icon
+            small
             class="mr-2"
-            @click="deleteHandler(item.id)"
+            @click="editHandler(item)"
+            dark
+            color="warning"
+            >mdi-pencil</v-icon
+          >
+          <v-icon
+            small
+            class="mr-2"
+            @click="deleteHandler(item)"
             dark
             color="error"
+            >mdi-delete</v-icon
           >
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-          <v-btn @click="showQr(item)" dark color="success">
-            <v-icon>mdi-qrcode</v-icon>
-          </v-btn>
+          <v-icon small @click="showQr(item)" dark color="success"
+            >mdi-qrcode</v-icon
+          >
         </template>
       </v-data-table>
     </v-card>
@@ -79,33 +89,37 @@
       max-width="400px"
     >
       <v-card>
-        <v-layout align-center justify-center>
-          <vue-qrcode
-            v-bind:value="itemQr.nama_customer"
-            errorCorectionLevel="H"
-            scale="13"
-          />
-        </v-layout>
-        <div class="ma-5">
-          <h2 class="headline text-left mb-3">
-            <b> {{ itemQr.nama_customer }}</b>
-          </h2>
-          <tr>
-            <td style="padding-right: 5px">Email</td>
-            <td>: {{ itemQr.email_customer }}</td>
-          </tr>
-          <tr>
-            <td style="padding-right: 5px">No. Telepon</td>
-            <td>: {{ itemQr.telepon_customer }}</td>
-          </tr>
-          <!-- <p class="text-left">Email: {{ itemQr.email_customer }}</p>
+        <div ref="printQr">
+          <v-layout justify-center id="qr" column>
+            <vue-qrcode
+              v-bind:value="itemQr.nama_customer"
+              errorCorectionLevel="H"
+              scale="50"
+            />
+          </v-layout>
+          <div class="mt-1 mr-5 ml-5 mb-5">
+            <h2 class="headline text-left mb-3">
+              <b> {{ itemQr.nama_customer }}</b>
+            </h2>
+            <tr>
+              <td style="padding-right: 5px">Email</td>
+              <td>: {{ itemQr.email_customer }}</td>
+            </tr>
+            <tr>
+              <td style="padding-right: 5px">No. Telepon</td>
+              <td>: {{ itemQr.telepon_customer }}</td>
+            </tr>
+            <!-- <p class="text-left">Email: {{ itemQr.email_customer }}</p>
           <p class="text-left">No. Telepon: {{ itemQr.telepon_customer }}</p> -->
+          </div>
         </div>
-
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="warning" text @click="closeQr">
             Close
+          </v-btn>
+          <v-btn color="success" text @click="exportToPDF">
+            Print
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -120,14 +134,22 @@
 
 <script>
 import VueQrcode from "vue-qrcode";
+import print from "vue-print-nb";
+import html2pdf from "html2pdf.js";
 
 export default {
   name: "Customer",
+  directives: {
+    print,
+  },
   components: {
     VueQrcode,
   },
   data() {
     return {
+      printQr: {
+        id: "qr",
+      },
       inputType: "Tambah",
       load: false,
       snackbar: false,
@@ -160,6 +182,15 @@ export default {
     };
   },
   methods: {
+    exportToPDF() {
+      html2pdf(this.$refs.printQr, {
+        margin: 3,
+        filename: "document.pdf",
+        image: { type: "png", quality: 1 },
+        html2canvas: { dpi: 200, letterRendering: true },
+        jsPDF: { unit: "mm", format: "a6", orientation: "portrait" },
+      });
+    },
     save() {
       this.customer.append("nama_customer", this.form.nama_customer);
       this.customer.append("email_customer", this.form.email_customer);
@@ -281,8 +312,8 @@ export default {
       this.dialog = true;
     },
 
-    deleteHandler(id) {
-      this.deleteId = id;
+    deleteHandler(item) {
+      this.deleteId = item.id;
       this.deleteData();
     },
 

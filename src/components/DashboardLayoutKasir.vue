@@ -69,19 +69,9 @@ export default {
     return {
       drawer: true,
       items: [
-        { title: "Dashboard", to: "/operational", icon: "mdi-monitor-dashboard" },
-        { title: "Pegawai", to: "/pegawai", icon: "mdi-account-group" },
-        { title: "Customer", to: "/customer", icon: "mdi-human-male-female" },
-        { title: "Menu", to: "/menu", icon: "mdi-food" },
-        { title: "Bahan", to: "/bahan", icon: "mdi-package" },
-        { title: "Stok", to: "/stok", icon: "mdi-database" },
-        { title: "Histori Masuk", to: "/histori", icon: "mdi-swap-vertical-bold" },
-        { title: "Histori Keluar", to: "/historiKeluar", icon: "mdi-swap-vertical-bold" },
-        { title: "Meja", to: "/meja", icon: "mdi-table-chair" },
-        { title: "Reservasi", to: "/reservasi", icon: "mdi-clipboard-list" },
-        { title: "Pesanan", to: "/pesanan", icon: "mdi-silverware-fork-knife" },
-        { title: "Transaksi", to: "/transaksi", icon: "mdi-cash-register" },
-        { title: "Kartu", to: "/kartu", icon: "mdi-credit-card" }
+        { title: "Dashboard", to: "/kasir", icon: "mdi-monitor-dashboard" },
+        { title: "Reservasi", to: "/reservasiKasir", icon: "mdi-clipboard-list" },
+        { title: "Transaksi", to: "/transaksiKasir", icon: "mdi-cash-register" }
       ],
       users: [],
       form: {

@@ -1,8 +1,9 @@
 <template>
   <v-main>
+    <!-- TABEL DATA -->
     <v-card class="mt-1 rounded-0 elevation-0">
       <v-card-title class="pb-0">
-        <h2>TABEL MEJA</h2>
+        <h2>TABEL BAHAN</h2>
       </v-card-title>
       <v-card-title class="pt-0">
         <v-text-field
@@ -13,41 +14,40 @@
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-btn color="warning" @click="dialog = true" class="elevation-0 rounded-0">Tambah Meja</v-btn>
+        <v-btn color="warning" @click="dialog = true" class="elevation-0 rounded-0">Tambah Bahan</v-btn>
       </v-card-title>
-      <v-data-table :headers="headers" :items="mejas" :search="search">
-        <template v-slot:[`item.status_meja`]="{ item }">
-          <v-chip
-              :color="getColor(item.status_meja)"
-              dark
-              small
-          >
-            {{ item.status_meja }}
-          </v-chip>
-        </template>
+      <v-data-table :headers="headers" :items="bahans" :search="search">
         <template v-slot:[`item.actions`]="{ item }">
           <v-icon small class="mr-2" @click="editHandler(item)" dark color="warning">mdi-pencil</v-icon>
-          <v-icon small class="mr-2" @click="deleteHandler(item.id_menu)" dark color="error">mdi-delete</v-icon>
+          <v-icon small class="mr-2" @click="deleteHandler(item)" dark color="error">mdi-delete</v-icon>
         </template>
       </v-data-table>
     </v-card>
 
+    <!-- DIALOG TAMBAH/UPDATE -->
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
         <v-toolbar dark color="warning">
-          <v-toolbar-title class="headline">{{ formTitle }} Meja</v-toolbar-title>
+          <v-toolbar-title class="headline"
+            >{{ formTitle }} Bahan</v-toolbar-title
+          >
         </v-toolbar>
         <v-card-text>
           <v-container>
             <v-text-field
-              v-model="form.nomor_meja"
-              label="Nomor Meja"
+              v-model="form.nama_bahan"
+              label="Nama Bahan"
+              required
+            ></v-text-field>
+            <v-text-field
+              v-model="form.serving_size"
+              label="Serving Size"
               required
             ></v-text-field>
             <v-select
-              v-model="form.status_meja"
-              label="Status Meja"
-              :items="item_status"
+              v-model="form.satuan_serving"
+              label="Satuan Serving"
+              :items="satuan"
               required
             ></v-select>
           </v-container>
@@ -59,6 +59,8 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- SNACKBAR STATUS -->
     <v-snackbar v-model="snackbar" :color="color" timeout="2000" bottom>
       {{ error_message }}
     </v-snackbar>
@@ -67,46 +69,44 @@
 
 <script>
 export default {
-  name: "Meja",
+  name: "Customer",
   data() {
     return {
-      item_status: ["Tersedia", "Tidak Tersedia"],
       inputType: "Tambah",
       load: false,
       snackbar: false,
       error_message: "",
       color: "",
+      satuan: ["gram", "ml"],
       search: null,
       dialog: false,
       headers: [
-        { text: "Nomor Meja", value: "nomor_meja" },
-        { text: "Status Meja", value: "status_meja" },
+        { text: "Nama Bahan", value: "nama_bahan" },
+        { text: "Serving Size", value: "serving_size" },
+        { text: "Satuan Serving", value: "satuan_serving" },
         { text: "Actions", value: "actions", sortable: false },
       ],
-      Meja: new FormData(),
-      mejas: [],
+      bahan: new FormData(),
+      bahans: [],
       form: {
-        nomor_meja: null,
-        status_meja: null
+        nama_bahan: "",
+        serving_size: null,
+        satuan_serving: "",
       },
       editId: "",
       deleteId: "",
     };
   },
   methods: {
-    getColor (status_meja) {
-      if(status_meja == "Tersedia") return "success"
-      else return "error"
-    },
-
     save() {
-      this.Meja.append("nomor_meja", this.form.nomor_meja);
-      this.Meja.append("status_meja", this.form.status_meja);
+      this.bahan.append("nama_bahan", this.form.nama_bahan);
+      this.bahan.append("serving_size", this.form.serving_size);
+      this.bahan.append("satuan_serving", this.form.satuan_serving);
 
-      let url = this.$api + "/mejas/";
+      let url = this.$api + "/bahans/";
       this.load = true;
       this.$http
-        .post(url, this.Meja, {
+        .post(url, this.bahan, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
@@ -130,11 +130,12 @@ export default {
 
     update() {
       let newData = {
-        nomor_meja: this.form.nomor_meja,
-        status_meja: this.form.status_meja,
+        nama_bahan: this.form.nama_bahan,
+        serving_size: this.form.serving_size,
+        satuan_serving: this.form.satuan_serving,
       };
 
-      var url = this.$api + "/mejas/" + this.editId;
+      var url = this.$api + "/bahans/" + this.editId;
       this.load = true;
       this.$http
         .put(url, newData, {
@@ -162,12 +163,12 @@ export default {
 
     deleteData() {
       //mengahapus data
-      var url = this.$api + "/mejas/" + this.deleteId;
+      var url = this.$api + "/bahans/" + this.deleteId;
       //data dihapus berdasarkan id
       this.$http
         .delete(url, {
           headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
+            Authorization: "Bearer" + localStorage.getItem("token"),
           },
         })
         .then((response) => {
@@ -197,7 +198,7 @@ export default {
     },
 
     readData() {
-      let url = this.$api + "/mejas";
+      let url = this.$api + "/bahans";
       this.$http
         .get(url, {
           headers: {
@@ -205,20 +206,21 @@ export default {
           },
         })
         .then((response) => {
-          this.mejas = response.data.data;
+          this.bahans = response.data.data;
         });
     },
 
     editHandler(item) {
       this.inputType = "Update";
       this.editId = item.id;
-      this.form.nomor_meja = item.nomor_meja;
-      this.form.status_meja = item.status_meja;
+      this.form.nama_bahan = item.nama_bahan;
+      this.form.serving_size = item.serving_size;
+      this.form.satuan_serving = item.satuan_serving;
       this.dialog = true;
     },
 
-    deleteHandler(id) {
-      this.deleteId = id;
+    deleteHandler(item) {
+      this.deleteId = item.id;
       this.deleteData();
     },
 
@@ -236,8 +238,9 @@ export default {
 
     resetForm() {
       this.form = {
-        nomor_meja: null,
-        status_meja: null
+        nama_bahan: "",
+        serving_size: null,
+        satuan_serving: "",
       };
     },
   },

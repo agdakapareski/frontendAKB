@@ -42,7 +42,7 @@
     </v-navigation-drawer>
 
     <!-- BAGIAN APP BAR -->
-    <v-app-bar app dark color="warning" fixed height="50px" :items="form" elevation="0">
+    <v-app-bar app dark color="warning" fixed height="50px" :items="form">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <VSpacer />
       <v-toolbar-item class="mr-3">
@@ -69,19 +69,9 @@ export default {
     return {
       drawer: true,
       items: [
-        { title: "Dashboard", to: "/operational", icon: "mdi-monitor-dashboard" },
-        { title: "Pegawai", to: "/pegawai", icon: "mdi-account-group" },
-        { title: "Customer", to: "/customer", icon: "mdi-human-male-female" },
-        { title: "Menu", to: "/menu", icon: "mdi-food" },
-        { title: "Bahan", to: "/bahan", icon: "mdi-package" },
-        { title: "Stok", to: "/stok", icon: "mdi-database" },
-        { title: "Histori Masuk", to: "/histori", icon: "mdi-swap-vertical-bold" },
-        { title: "Histori Keluar", to: "/historiKeluar", icon: "mdi-swap-vertical-bold" },
-        { title: "Meja", to: "/meja", icon: "mdi-table-chair" },
-        { title: "Reservasi", to: "/reservasi", icon: "mdi-clipboard-list" },
-        { title: "Pesanan", to: "/pesanan", icon: "mdi-silverware-fork-knife" },
-        { title: "Transaksi", to: "/transaksi", icon: "mdi-cash-register" },
-        { title: "Kartu", to: "/kartu", icon: "mdi-credit-card" }
+        { title: "Dashboard", to: "/chef", icon: "mdi-monitor-dashboard" },
+        { title: "Bahan", to: "/bahanChef", icon: "mdi-package" },
+        { title: "Pesanan", to: "/pesananChef", icon: "mdi-silverware-fork-knife" },
       ],
       users: [],
       form: {

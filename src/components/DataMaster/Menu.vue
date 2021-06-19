@@ -1,34 +1,10 @@
 <template>
   <v-main>
-    <h3 class="text-h3 font-weight-medium mb-5">Menu</h3>
-    <!-- KETERANGAN SIMBOL -->
-    <!-- <v-card class="mt-4" max-width="auto">
-      <h4 class="mr-4 ml-4 pt-3">Keterangan:</h4>
-      <div class="ml-4 ma-2 mr-4 pb-3">
-        <tr>
-          <td>
-            <v-btn fab class="mr-2 mb-2" dark color="warning"
-              ><v-icon>mdi-plus</v-icon></v-btn
-            >
-          </td>
-          <td>: Tambah Data</td>
-          <td>
-            <v-btn class="ml-10 mr-2 mb-2" dark color="warning"
-              ><v-icon>mdi-pencil</v-icon></v-btn
-            >
-          </td>
-          <td>: Ubah/Update Data</td>
-          <td>
-            <v-btn class="ml-10 mr-2 mb-2" dark color="error"
-              ><v-icon>mdi-delete</v-icon></v-btn
-            >
-          </td>
-          <td>: Hapus Data</td>
-        </tr>
-      </div>
-    </v-card> -->
-    <v-card class="mt-4">
-      <v-card-title>
+    <v-card class="mt-1 rounded-0 elevation-0">
+      <v-card-title class="pb-0">
+        <h2>TABEL MENU</h2>
+      </v-card-title>
+      <v-card-title class="pt-0">
         <v-text-field
           v-model="search"
           prepend-icon="mdi-magnify"
@@ -37,18 +13,12 @@
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-btn color="warning" @click="dialog = true" fab>
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
+        <v-btn color="warning" @click="dialog = true" class="elevation-0 rounded-0">Tambah Menu</v-btn>
       </v-card-title>
       <v-data-table :headers="headers" :items="menus" :search="search">
         <template v-slot:[`item.actions`]="{ item }">
-          <v-btn class="mr-2" @click="editHandler(item)" dark color="warning">
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-          <v-btn @click="deleteHandler(item.id_menu)" dark color="error">
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
+          <v-icon small class="mr-2" @click="editHandler(item)" dark color="warning">mdi-pencil</v-icon>
+          <v-icon small @click="deleteHandler(item.id_menu)" dark color="error">mdi-delete</v-icon>
         </template>
       </v-data-table>
     </v-card>
@@ -121,6 +91,7 @@ export default {
       items_kategori: ["Makanan Utama", "Side Dish", "Minuman"],
       headers: [
         { text: "Nama Menu", value: "nama_menu" },
+        { text: "Bahan", value: "nama_bahan" },
         { text: "Kategori Menu", value: "kategori_menu" },
         { text: "Deskripsi Menu", value: "deskripsi_menu" },
         { text: "Harga Menu", value: "harga" },

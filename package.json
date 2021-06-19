@@ -10,8 +10,11 @@
   "dependencies": {
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "html2pdf.js": "^0.9.3",
     "qrcode": "^1.4.4",
     "vue": "^2.6.11",
+    "vue-html-to-paper": "^1.4.1",
+    "vue-print-nb": "^1.7.3",
     "vue-qrcode": "^0.3.5",
     "vue-router": "^3.5.1",
     "vuetify": "^2.4.9"

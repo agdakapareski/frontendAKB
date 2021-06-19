@@ -105,6 +105,11 @@ export default {
                 name: 'DashboardChef',
               });
             }
+            if(job == 'Kasir') {
+              this.$router.push({
+                name: 'DashboardKasir',
+              });
+            }
           })
           .catch(error => {
             this.error_message = error.response.data.message;
